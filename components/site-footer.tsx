@@ -48,6 +48,10 @@ export function SiteFooter() {
         </div>
         <span className="footer-location">Vienne · Isère</span>
       </div>
+      <p className="footer-credit">
+        Réalisation et refonte du site web effectuées à titre gratuit par Manfred Parbatia
+        {" "}(MP Publication Web Cambodia), freelance.
+      </p>
     </footer>
   );
 }

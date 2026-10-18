@@ -1353,6 +1353,14 @@ h2 em,
   letter-spacing: 0.09em;
 }
 
+.footer-credit {
+  margin: 0;
+  padding: 0 0 20px;
+  color: #aeb3b5;
+  font-size: 11px;
+  line-height: 1.8;
+}
+
 /* Public content pages */
 .page-main {
   min-height: 62vh;
