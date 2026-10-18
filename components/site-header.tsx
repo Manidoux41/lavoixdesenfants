@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ArrowUpRight, Menu } from "lucide-react";
+import { BrandSymbol } from "@/components/brand-symbol";
 
 const navigation = [
   { href: "/association", label: "L’association" },
@@ -14,7 +15,7 @@ export function SiteHeader() {
     <header className="site-header">
       <div className="header-inner">
         <Link className="brand" href="/" aria-label="La Voix des Enfants Placés, accueil">
-          <span className="brand-mark" aria-hidden="true">V</span>
+          <BrandSymbol className="brand-mark" />
           <span className="brand-name">
             <strong>La Voix</strong>
             <span>des Enfants Placés</span>

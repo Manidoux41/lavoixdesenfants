@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { LogOut } from "lucide-react";
 import { logoutAction } from "@/app/admin/actions";
+import { BrandSymbol } from "@/components/brand-symbol";
 import { getAdminUser } from "@/lib/admin-auth";
 import "./admin.css";
 
@@ -20,7 +21,7 @@ export default async function AdminLayout({ children }: LayoutProps<"/admin">) {
       {user && (
         <header className="admin-header">
           <Link className="admin-brand" href="/admin">
-            <span className="brand-mark" aria-hidden="true">V</span>
+            <BrandSymbol className="brand-mark" />
             <span>La Voix <small>Administration</small></span>
           </Link>
           <nav aria-label="Administration">

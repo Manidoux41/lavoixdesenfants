@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
+import { BrandSymbol } from "@/components/brand-symbol";
 
 export function SiteFooter() {
   return (
@@ -7,7 +8,7 @@ export function SiteFooter() {
       <div className="footer-main">
         <div className="footer-brand-block">
           <Link className="brand brand-light" href="/">
-            <span className="brand-mark" aria-hidden="true">V</span>
+            <BrandSymbol className="brand-mark" />
             <span className="brand-name">
               <strong>La Voix</strong>
               <span>des Enfants Placés</span>

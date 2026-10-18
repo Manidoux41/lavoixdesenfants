@@ -117,13 +117,11 @@ textarea:focus-visible {
 }
 
 .brand-mark {
-  width: 39px;
+  width: 41px;
   height: 39px;
-  display: grid;
-  place-items: center;
-  background: var(--red);
-  color: var(--white);
-  font: italic 700 24px/1 var(--font-editorial);
+  flex: 0 0 41px;
+  display: block;
+  object-fit: contain;
 }
 
 .brand-name {
@@ -2384,8 +2382,9 @@ h2 em,
   }
 
   .brand-mark {
-    width: 35px;
+    width: 37px;
     height: 35px;
+    flex-basis: 37px;
   }
 
   .brand-name {

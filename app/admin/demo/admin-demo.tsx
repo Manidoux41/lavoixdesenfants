@@ -12,6 +12,7 @@ import {
   Settings,
 } from "lucide-react";
 import { useState } from "react";
+import { BrandSymbol } from "@/components/brand-symbol";
 
 const sections = [
   { id: "dashboard", label: "Tableau de bord", icon: LayoutDashboard },
@@ -142,7 +143,7 @@ export function AdminDemo() {
     <main className="admin-demo-shell">
       <aside className="admin-demo-sidebar">
         <Link className="admin-brand" href="/admin/login">
-          <span className="brand-mark" aria-hidden="true">V</span>
+          <BrandSymbol className="brand-mark" />
           <span>La Voix <small>Administration</small></span>
         </Link>
         <p className="admin-demo-nav-label">ESPACE DE TRAVAIL</p>

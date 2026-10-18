@@ -8,6 +8,8 @@ Cette version comprend le site public, ses pages d’information, une rubrique d
 
 La direction artistique privilégie désormais le bleu nuit et le bleu pétrole, avec un accent bleu clair. Le site propose des images d’illustration génériques, sans présenter les personnes photographiées comme des familles accompagnées par l’association ou comme des témoins. Les actualités publiées avec une image apparaissent dans un diaporama d’accueil avec leur titre, catégorie et lien vers l’article.
 
+Le logo fourni dans `public/images/ai-logo-66f1e7893932-standard.webp` est utilisé dans les en-têtes public et administrateur ainsi qu’au pied de page. La favicon reprend ce même visuel.
+
 Sans variable `DATABASE_URL`, l’accueil et la rubrique `/actualites` affichent trois articles fictifs dans le diaporama et la liste afin de permettre de prévisualiser les images, catégories et liens d’articles. Chaque page d’exemple est signalée comme contenu de démonstration et ne représente pas une publication officielle. Ces exemples disparaissent dès que la base est configurée ; les articles publiés en base prennent alors le relais.
 
 Sans variable `DATABASE_URL`, `/admin/login` propose aussi un accès à `/admin/demo`, une maquette de l’espace d’administration alimentée uniquement par des exemples fictifs. Elle est en lecture seule et ne donne pas accès aux routes d’administration réelles ni aux opérations d’écriture. La maquette reste disponible une fois la base configurée, mais l’accès réel passe alors par la connexion habituelle.
