@@ -13,7 +13,7 @@ type SlideArticle = {
   coverImageAlt: string | null;
   publishedAt: string | null;
   categories: { name: string; slug: string }[];
-  isDemo?: boolean;
+  isPreview?: boolean;
 };
 
 export function ArticleSlideshow({ articles }: { articles: SlideArticle[] }) {
@@ -77,7 +77,7 @@ export function ArticleSlideshow({ articles }: { articles: SlideArticle[] }) {
         <p className="slideshow-index" aria-hidden="true">
           LVE / JOURNAL <span>{String(activeIndex + 1).padStart(2, "0")} — {String(articles.length).padStart(2, "0")}</span>
         </p>
-        {article.isDemo && <span className="slideshow-demo-label">ARTICLE DE DÉMONSTRATION</span>}
+        {article.isPreview && <span className="slideshow-demo-label">APERÇU LOCAL</span>}
         <Link
           className="slideshow-open"
           href={`/actualites/${article.slug}`}
@@ -90,7 +90,7 @@ export function ArticleSlideshow({ articles }: { articles: SlideArticle[] }) {
 
       <div className="slideshow-copy" aria-live="off">
         <div className="slideshow-meta">
-          {article.isDemo && <span className="slideshow-demo-note">Exemple fictif</span>}
+          {article.isPreview && <span className="slideshow-demo-note">Aperçu local</span>}
           {article.categories.map((category) => (
             <Link
               className="slideshow-category"

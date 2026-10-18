@@ -22,7 +22,7 @@ async function NewsList({ searchParams }: { searchParams: SearchParams }) {
   const page = Number.isSafeInteger(requestedPage) && requestedPage > 0
     ? Math.min(requestedPage, 10_000)
     : 1;
-  const { articles, categories, total, isDemo } = await getPublishedArticles({ query, category, page });
+  const { articles, categories, total, isPreview } = await getPublishedArticles({ query, category, page });
   const pageCount = Math.ceil(total / 9);
   const pageHref = (nextPage: number) => {
     const params = new URLSearchParams();
@@ -52,7 +52,7 @@ async function NewsList({ searchParams }: { searchParams: SearchParams }) {
           })}
         </div>
       </section>
-      {isDemo && <p className="demo-content-note" role="note">Aperçu sans base de données : les articles affichés sont des exemples fictifs et ne constituent pas des publications de l’association.</p>}
+      {isPreview && <p className="demo-content-note" role="note">Aperçu local : ces contenus fournis par l’association ne sont pas encore enregistrés en base de données. Après connexion, importez-les une fois pour les gérer depuis l’administration.</p>}
       {articles.length ? (
         <div className="article-grid news-list">
           {articles.map((article) => <ArticleCard key={article.id} article={article} />)}

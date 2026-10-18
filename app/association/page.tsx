@@ -31,19 +31,20 @@ export default function AssociationPage() {
     <main className="page-main" id="contenu">
       <PageHeading
         eyebrow="Qui sommes-nous"
-        title="Une voix pour écouter. Un lien pour avancer."
-        description="À Vienne, l’association porte la parole des parents et des enfants placés et encourage le dialogue, l’accès aux droits et la recherche de solutions adaptées à l’intérêt de l’enfant."
+        title="Défendre les enfants. Accompagner les familles."
+        description="La Voix des enfants placés à Vienne est une association engagée pour les droits des enfants, le soutien aux familles et l’évolution de la protection de l’enfance."
       />
       <section className="editorial-split">
         <div className="editorial-index"><span>01</span><span>NOTRE MISSION</span></div>
         <div className="editorial-copy">
-          <h2>Faire une place<br />à chaque <em>parole.</em></h2>
+          <h2>Une association<br />engagée et <em>à l’écoute.</em></h2>
           <p>
-            Certaines familles estiment être confrontées à des décisions injustes ou à des dysfonctionnements de l’Aide sociale à l’enfance. L’association souhaite leur offrir un espace d’écoute et soutenir le dialogue.
+            Fondée et présidée par Cassandra Begot, l’association est située à Vienne (38200), en Isère. Elle donne une place à la parole des enfants et des parents, accompagne les familles dans leurs démarches et porte des propositions pour faire évoluer les pratiques.
           </p>
           <p>
-            Son engagement est de faciliter l’accès à l’information et de rechercher, avec les personnes concernées, des réponses adaptées à l’intérêt de l’enfant.
+            Elle défend une protection plus humaine et transparente, centrée sur les besoins de chaque enfant et attentive aux droits des familles et aux liens familiaux lorsque leur maintien correspond à l’intérêt de l’enfant.
           </p>
+          <p><strong>Cassandra Begot — Fondatrice et présidente de l’association.</strong></p>
           <Link className="text-link" href="/actions">
             Découvrir nos actions <ArrowUpRight size={16} aria-hidden="true" />
           </Link>
@@ -79,7 +80,7 @@ export default function AssociationPage() {
       <section className="notice-strip">
         <span className="notice-symbol" aria-hidden="true">i</span>
         <p>
-          Les informations détaillées sur l’histoire, les responsables, le siège et les activités précises de l’association seront complétées après vérification par ses représentants.
+          Pour découvrir l’accompagnement proposé, les orientations possibles et les propositions portées par l’association, consultez les <Link href="/actualites">articles et repères</Link> ou contactez-nous.
         </p>
       </section>
     </main>

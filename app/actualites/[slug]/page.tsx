@@ -45,6 +45,7 @@ export default async function ArticlePage({ params }: Props) {
   if (!article) notFound();
   const related = await getRelatedArticles(slug, article.categories.map(({ slug: categorySlug }) => categorySlug));
   const paragraphs = article.content.split(/\n{2,}/).map((paragraph) => paragraph.trim()).filter(Boolean);
+  const petitionUrl = "https://c.org/9HPScMtP9C";
 
   return (
     <main className="article-page" id="contenu">
@@ -54,7 +55,7 @@ export default async function ArticlePage({ params }: Props) {
       </div>
       <article>
         <header className="article-header">
-          {"authorId" in article && <p className="demo-article-notice">Article fictif de démonstration · ne constitue pas une publication officielle de l’association.</p>}
+          {"isPreview" in article && <p className="demo-article-notice">Aperçu local · cet article n’est pas encore enregistré en base de données.</p>}
           <div className="article-categories">
             {article.categories.map((category) => <Link href={`/actualites?categorie=${encodeURIComponent(category.slug)}`} key={category.slug}>{category.name}</Link>)}
           </div>
@@ -74,7 +75,20 @@ export default async function ArticlePage({ params }: Props) {
           </figure>
         )}
         <div className="article-prose">
-          {paragraphs.map((paragraph, index) => index === 0 ? <p className="article-lead" key={index}>{paragraph}</p> : <p key={index}>{paragraph}</p>)}
+          {paragraphs.map((paragraph, index) => {
+            const className = index === 0 ? "article-lead" : undefined;
+            const petitionUrlIndex = paragraph.indexOf(petitionUrl);
+            if (petitionUrlIndex >= 0) {
+              return (
+                <p className={className} key={index}>
+                  {paragraph.slice(0, petitionUrlIndex)}
+                  <a href={petitionUrl} rel="noreferrer" target="_blank">ouvrir la pétition sur Change.org</a>
+                  {paragraph.slice(petitionUrlIndex + petitionUrl.length)}
+                </p>
+              );
+            }
+            return <p className={className} key={index}>{paragraph}</p>;
+          })}
         </div>
         {article.tags.length > 0 && <ul className="article-tags" aria-label="Mots-clés">{article.tags.map((tag) => <li key={tag.slug}>#{tag.name}</li>)}</ul>}
       </article>

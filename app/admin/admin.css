@@ -519,6 +519,25 @@ body:has(.admin-shell) > .site-footer {
   gap: 16px;
 }
 
+.admin-upload-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 9px;
+}
+
+.admin-upload-row input[type="file"] {
+  min-width: 0;
+  padding: 7px;
+  font-size: 10px;
+}
+
+.admin-image-upload .admin-error,
+.admin-image-upload .admin-success {
+  margin: 0;
+  padding: 8px 10px;
+}
+
 .admin-form-actions {
   display: flex;
   justify-content: flex-end;

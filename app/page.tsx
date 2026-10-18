@@ -47,7 +47,7 @@ async function LatestArticles() {
           articles={articles.map((article) => ({
             ...article,
             publishedAt: article.publishedAt?.toISOString() ?? null,
-            isDemo: "isDemo" in article,
+            isPreview: "isPreview" in article,
           }))}
         />
       ) : (

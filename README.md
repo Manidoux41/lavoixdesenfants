@@ -1,6 +1,6 @@
 # La Voix des Enfants Placés — Vienne
 
-Refonte éditoriale responsive du site de l’association. Le contenu actuellement vérifié sur le site source présente une association qui porte la parole des parents et des enfants placés et encourage le dialogue, l’accès aux droits et la recherche de solutions adaptées à l’intérêt de l’enfant. Les coordonnées précises, responsables, modalités d’adhésion, témoignages et campagnes n’ont pas été repris faute de vérification.
+Refonte éditoriale responsive du site de l’association La Voix des enfants placés à Vienne. La présentation, les coordonnées et les propositions éditoriales actuelles ont été fournies par sa représentante et doivent être validées par l’association avant publication.
 
 ## État du projet
 
@@ -8,15 +8,17 @@ Cette version comprend le site public, ses pages d’information, une rubrique d
 
 La direction artistique privilégie désormais le bleu nuit et le bleu pétrole, avec un accent bleu clair. Le site propose des images d’illustration génériques, sans présenter les personnes photographiées comme des familles accompagnées par l’association ou comme des témoins. Les actualités publiées avec une image apparaissent dans un diaporama d’accueil avec leur titre, catégorie et lien vers l’article.
 
-Le logo fourni dans `public/images/ai-logo-66f1e7893932-standard.webp` est utilisé dans les en-têtes public et administrateur ainsi qu’au pied de page. La favicon reprend ce même visuel.
+Le logo fourni dans `public/images/WhatsApp Image 2026-10-18 at 18.20.45.jpeg` est utilisé dans les en-têtes public et administrateur ainsi qu’au pied de page. La favicon reprend son emblème.
 
 Le hero d’accueil peut afficher automatiquement une vidéo YouTube muette en boucle derrière un voile bleu. Seul un administrateur peut activer ou désactiver la vidéo et remplacer son lien depuis `/admin/settings`. Lorsque la vidéo est activée, le lecteur YouTube se charge à l’ouverture de la page ; les visiteurs sont informés dans la notice de confidentialité. La vidéo proposée est [« Pourquoi autant de placements abusifs ? » de La Maison des Maternelles – France Télévisions](https://www.youtube.com/watch?v=LnIO5TXB2X0) ; vérifier que ce contenu reste approprié et disponible avant la mise en production.
 
-Sans variable `DATABASE_URL`, l’accueil et la rubrique `/actualites` affichent trois articles fictifs dans le diaporama et la liste afin de permettre de prévisualiser les images, catégories et liens d’articles. Chaque page d’exemple est signalée comme contenu de démonstration et ne représente pas une publication officielle. Ces exemples disparaissent dès que la base est configurée ; les articles publiés en base prennent alors le relais.
+Sans variable `DATABASE_URL`, l’accueil et la rubrique `/actualites` affichent un aperçu non persistant des articles de présentation fournis par l’association. Après connexion de la base et création d’un compte administrateur, la commande `npm run db:seed-content` importe les articles publiés et leurs catégories. Les contenus déjà présents sous les mêmes adresses ne sont jamais écrasés ; ils pourront ensuite être modifiés dans l’espace d’administration.
 
 Sans variable `DATABASE_URL`, `/admin/login` propose aussi un accès à `/admin/demo`, une maquette de l’espace d’administration alimentée uniquement par des exemples fictifs. Elle est en lecture seule et ne donne pas accès aux routes d’administration réelles ni aux opérations d’écriture. La maquette reste disponible une fois la base configurée, mais l’accès réel passe alors par la connexion habituelle.
 
-**Ce n’est pas encore la plateforme complète demandée.** La gestion des catégories est disponible (création et association aux articles), mais la gestion des tags, l’éditeur riche, les prévisualisations, la médiathèque, l’interface de modération et les paramètres éditoriaux restent à réaliser. Les tests d’intégration et les parcours d’administration avec PostgreSQL sont également à compléter. Le schéma Prisma contient des modèles préparatoires pour certaines fonctions, mais ne constitue pas leur interface. La protection anti-spam du formulaire doit être complétée par une limitation de débit/WAF. Ne pas mettre en production avant d’avoir terminé ces éléments et vérifié les mentions légales et la notice de confidentialité.
+Vercel Blob est le stockage des fichiers, pas la base des comptes : les images sont hébergées dans Blob et leurs fiches (`url`, nom, type, taille, auteur) sont enregistrées dans le modèle Prisma `Media`. L’envoi d’images est réservé aux utilisateurs connectés à l’administration et accepte JPEG, PNG et WebP jusqu’à 4 Mo. La session d’administration et les rôles restent gérés par Prisma (`User` et `Session`) dans PostgreSQL.
+
+**La plateforme complète reste à construire.** Une médiathèque de consultation/gestion dédiée, la gestion des tags, l’éditeur riche, les prévisualisations et l’interface de modération restent à réaliser. Les tests d’intégration et les parcours d’administration avec PostgreSQL sont également à compléter. La protection anti-spam du formulaire doit être complétée par une limitation de débit/WAF. Vérifier les mentions légales et la notice de confidentialité avant publication.
 
 ## Développement local
 
@@ -27,13 +29,17 @@ npm ci
 cp .env.example .env
 ```
 
-Renseigner `DATABASE_URL` et `DIRECT_URL` dans `.env`. En local, les deux peuvent utiliser la même URL de base PostgreSQL.
+Renseigner `DATABASE_URL`, `DIRECT_URL` et `SESSION_SECRET` dans `.env`. Pour activer l’envoi d’images, ajouter `BLOB_STORE_ID` et `BLOB_READ_WRITE_TOKEN` depuis les variables de l’intégration Vercel Blob, sans préfixe `NEXT_PUBLIC_` et sans commiter les valeurs. En local, récupérer les variables via `vercel env pull` ou les configurer dans le `.env` ignoré par Git.
 
 ```bash
 npm run db:generate
 npm run db:migrate
+npm run admin:create
+npm run db:seed-content
 npm run dev
 ```
+
+L’import initial crée les catégories et les articles de présentation avec le premier compte administrateur trouvé. Les contenus sont modifiables dans `/admin/articles` et leurs catégories dans `/admin/categories`.
 
 Ouvrir <http://localhost:3000>. Pour contrôler les changements :
 
@@ -91,7 +97,7 @@ Les images doivent rester présentées comme des illustrations, jamais comme les
 7. Connecter le dépôt Git à Vercel et configurer les mêmes variables dans les environnements appropriés.
 8. Après déploiement, vérifier le domaine personnalisé, les URL canoniques, le formulaire, `robots.txt`, `sitemap.xml` et les pages légales.
 
-Les migrations ne sont pas exécutées au démarrage d’une instance. Aucun secret ne doit être préfixé par `NEXT_PUBLIC_` ni commité. Prévoir une sauvegarde PostgreSQL gérée et tester périodiquement la restauration. Les images d’articles n’ont pas encore de flux d’envoi/stockage médias : ne pas dépendre du disque local pour des fichiers persistants.
+Les migrations ne sont pas exécutées au démarrage d’une instance. Aucun secret ne doit être préfixé par `NEXT_PUBLIC_` ni commité. Prévoir une sauvegarde PostgreSQL gérée et tester périodiquement la restauration.
 
 ### Premier compte administrateur
 
@@ -111,4 +117,4 @@ La connexion utilise une session aléatoire conservée sous forme hachée en bas
 - Contenus détaillés sur l’histoire, les actions et les modalités de soutien.
 - Responsable de traitement et politique de conservation des courriels.
 - Autorisations de publication et éventuels droits sur le logo, les photos et les témoignages.
-- Gestion des tags, éditeur riche, médiathèque, modération, paramètres et tests de parcours/autorisation avec PostgreSQL.
+- Gestion des tags, éditeur riche, médiathèque complète, modération, paramètres et tests de parcours/autorisation avec PostgreSQL et Vercel Blob.

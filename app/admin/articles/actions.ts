@@ -12,22 +12,23 @@ export type ArticleFormState = { error?: string };
 
 const statuses = ["DRAFT", "IN_REVIEW", "SCHEDULED", "PUBLISHED"] as const;
 
+const builtInCoverImageUrls = new Set([
+  "/images/family-silhouettes.jpg",
+  "/images/support-community.jpg",
+  "/images/access-to-information.jpg",
+  "/images/parent-child-together.jpg",
+  "/images/father-child-walk.jpg",
+  "/images/parent-child-shoreline.jpg",
+  "/images/mother-child-distance.jpg",
+]);
+
 const articleSchema = z.object({
   id: z.string().optional(),
   title: z.string().trim().min(3).max(160),
   slug: z.string().trim().min(3).max(180).regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
   excerpt: z.string().trim().min(10).max(320),
   content: z.string().trim().min(1).max(100_000),
-  coverImageUrl: z.enum([
-    "",
-    "/images/family-silhouettes.jpg",
-    "/images/support-community.jpg",
-    "/images/access-to-information.jpg",
-    "/images/parent-child-together.jpg",
-    "/images/father-child-walk.jpg",
-    "/images/parent-child-shoreline.jpg",
-    "/images/mother-child-distance.jpg",
-  ]),
+  coverImageUrl: z.string().trim().max(2048),
   coverImageAlt: z.string().trim().max(250),
   status: z.enum(statuses),
   publishedAt: z.string().max(40),
@@ -75,6 +76,11 @@ function revalidateEditorialPages() {
   revalidatePath("/admin/articles");
 }
 
+async function isAllowedCoverImage(url: string) {
+  if (!url || builtInCoverImageUrls.has(url)) return true;
+  return Boolean(await db.media.findFirst({ where: { url }, select: { id: true } }));
+}
+
 export async function createArticleAction(
   _previousState: ArticleFormState,
   formData: FormData,
@@ -82,6 +88,9 @@ export async function createArticleAction(
   const user = await requireAdminUser();
   const parsed = parseArticle(formData);
   if (!parsed.success) return { error: "Vérifiez les champs. Le slug doit contenir des lettres minuscules, chiffres et tirets." };
+  if (!await isAllowedCoverImage(parsed.data.coverImageUrl)) {
+    return { error: "Choisissez une image intégrée au site ou téléversée dans la médiathèque." };
+  }
   const publication = publicationDate(parsed.data.status, parsed.data.publishedAt);
   if (publication.error) return { error: publication.error };
 
@@ -121,6 +130,9 @@ export async function updateArticleAction(
   const parsed = parseArticle(formData);
   if (!parsed.success || !parsed.data.id) {
     return { error: "Vérifiez les champs requis et réessayez." };
+  }
+  if (!await isAllowedCoverImage(parsed.data.coverImageUrl)) {
+    return { error: "Choisissez une image intégrée au site ou téléversée dans la médiathèque." };
   }
   const publication = publicationDate(parsed.data.status, parsed.data.publishedAt);
   if (publication.error) return { error: publication.error };

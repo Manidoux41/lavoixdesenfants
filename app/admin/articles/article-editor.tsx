@@ -3,6 +3,7 @@
 import { useActionState, useState } from "react";
 import Link from "next/link";
 import { Save } from "lucide-react";
+import { AdminImageUploader } from "@/app/admin/articles/image-uploader";
 import {
   createArticleAction,
   updateArticleAction,
@@ -49,6 +50,7 @@ export function ArticleEditor({
   const [title, setTitle] = useState(article?.title ?? "");
   const [slug, setSlug] = useState(article?.slug ?? "");
   const [slugEdited, setSlugEdited] = useState(Boolean(article?.slug));
+  const [coverImageUrl, setCoverImageUrl] = useState(article?.coverImageUrl ?? "");
 
   return (
     <form className="admin-editor" action={action}>
@@ -101,7 +103,7 @@ export function ArticleEditor({
       <div className="admin-editor-row">
         <div className="admin-field">
           <label htmlFor="article-cover">Image de couverture</label>
-          <select id="article-cover" name="coverImageUrl" defaultValue={article?.coverImageUrl ?? ""}>
+          <select id="article-cover" name="coverImageUrl" value={coverImageUrl} onChange={(event) => setCoverImageUrl(event.target.value)}>
             <option value="">Aucune image</option>
             <option value="/images/family-silhouettes.jpg">Famille réunie · silhouettes (illustration)</option>
             <option value="/images/support-community.jpg">Soutien entre adultes (illustration)</option>
@@ -110,6 +112,7 @@ export function ArticleEditor({
             <option value="/images/father-child-walk.jpg">Un père et son enfant, de dos (illustration)</option>
             <option value="/images/parent-child-shoreline.jpg">Un parent et un enfant au bord de l’eau (illustration)</option>
             <option value="/images/mother-child-distance.jpg">Distance entre mère et enfant · illustration artistique</option>
+            {coverImageUrl && !coverImageUrl.startsWith("/images/") && <option value={coverImageUrl}>Image téléversée · Vercel Blob</option>}
           </select>
         </div>
         <div className="admin-field">
@@ -118,6 +121,7 @@ export function ArticleEditor({
           <small>Requis si une image de couverture est choisie.</small>
         </div>
       </div>
+      <AdminImageUploader onUploaded={setCoverImageUrl} />
       <div className="admin-field">
         <label htmlFor="article-categories">Catégories</label>
         {categories.length ? (

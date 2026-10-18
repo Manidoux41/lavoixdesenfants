@@ -3,7 +3,7 @@ import "server-only";
 import { ArticleStatus, Prisma } from "@prisma/client";
 import { connection } from "next/server";
 import { db } from "@/lib/db";
-import { demoArticles } from "@/lib/demo-articles";
+import { previewArticles } from "@/lib/demo-articles";
 
 const articleCardSelect = {
   id: true,
@@ -21,7 +21,7 @@ export type ArticleCardData = Prisma.ArticleGetPayload<{
 }>;
 
 export async function getLatestArticles(limit = 5) {
-  if (!process.env.DATABASE_URL) return demoArticles.slice(0, limit);
+  if (!process.env.DATABASE_URL) return previewArticles.slice(0, limit);
   await connection();
 
   return db.article.findMany({
@@ -48,14 +48,14 @@ export async function getPublishedArticles({
   pageSize?: number;
 }) {
   if (!process.env.DATABASE_URL) {
-    const matchingArticles = demoArticles.filter((article) => {
+    const matchingArticles = previewArticles.filter((article) => {
       const matchesQuery = !query
         || article.title.toLocaleLowerCase("fr").includes(query.toLocaleLowerCase("fr"))
         || article.excerpt.toLocaleLowerCase("fr").includes(query.toLocaleLowerCase("fr"));
       const matchesCategory = !category || article.categories.some((item) => item.slug === category);
       return matchesQuery && matchesCategory;
     });
-    const categories = demoArticles.flatMap((article) => article.categories)
+    const categories = previewArticles.flatMap((article) => article.categories)
       .filter((item, index, all) => all.findIndex((candidate) => candidate.slug === item.slug) === index)
       .map(({ name, slug }) => ({ name, slug }));
 
@@ -63,7 +63,7 @@ export async function getPublishedArticles({
       articles: matchingArticles.slice((page - 1) * pageSize, page * pageSize),
       categories,
       total: matchingArticles.length,
-      isDemo: true,
+      isPreview: true,
     };
   }
   await connection();
@@ -99,15 +99,15 @@ export async function getPublishedArticles({
     }),
   ]);
 
-  return { articles, categories, total, isDemo: false };
+  return { articles, categories, total, isPreview: false };
 }
 
 export async function getPublishedArticleBySlug(slug: string) {
   if (!process.env.DATABASE_URL) {
-    const article = demoArticles.find((item) => item.slug === slug);
+    const article = previewArticles.find((item) => item.slug === slug);
     if (!article) return null;
 
-    const timestamp = article.publishedAt;
+    const timestamp = article.publishedAt ?? new Date();
     return {
       ...article,
       author: { name: null },
@@ -116,6 +116,7 @@ export async function getPublishedArticleBySlug(slug: string) {
       seoDescription: null,
       ogImageUrl: null,
       status: ArticleStatus.PUBLISHED,
+      isPreview: true,
       archivedAt: null,
       authorId: "demo",
       createdAt: timestamp,
@@ -142,7 +143,7 @@ export async function getPublishedArticleBySlug(slug: string) {
 export async function getRelatedArticles(slug: string, categorySlugs: string[]) {
   if (categorySlugs.length === 0) return [];
   if (!process.env.DATABASE_URL) {
-    return demoArticles.filter((article) =>
+    return previewArticles.filter((article) =>
       article.slug !== slug && article.categories.some((category) => categorySlugs.includes(category.slug)),
     ).slice(0, 3);
   }
