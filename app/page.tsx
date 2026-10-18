@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { Suspense } from "react";
 import {
@@ -116,17 +117,20 @@ export default function Home() {
               <span>La Voix des Enfants Placés à Vienne (38200)</span>
             </div>
           </div>
-          <div className="hero-art" aria-label="Illustration typographique de voix qui se répondent">
+          <div className="hero-art" aria-label="Médaillon de l’association, extérieur transparent et intérieur blanc légèrement translucide">
             <div className="hero-orbit orbit-one" aria-hidden="true" />
             <div className="hero-orbit orbit-two" aria-hidden="true" />
             <div className="hero-stamp">
               <span>ÉCOUTER</span><span className="stamp-dot" /><span>COMPRENDRE</span><span className="stamp-dot" /><span>AGIR</span>
             </div>
-            <div className="hero-voice" aria-hidden="true">
-              <span>UNE</span>
-              <strong>VOIX</strong>
-              <span>QUI COMPTE</span>
-            </div>
+            <Image
+              className="hero-logo-outline"
+              src="/images/logo-association-contour.png"
+              alt="Logo rond de La Voix des Enfants Placés à Vienne, avec fond blanc légèrement translucide, maison bleue et personnages bleu et jaune."
+              width={768}
+              height={768}
+              loading="eager"
+            />
             <span className="hero-art-index">V / 38 · ISÈRE</span>
           </div>
           <Link className="hero-scroll" href="#engagements">

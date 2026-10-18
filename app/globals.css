@@ -435,32 +435,12 @@ h2 em,
   border-color: rgba(122, 181, 204, 0.58);
 }
 
-.hero-voice {
+.hero-logo-outline {
   position: relative;
   z-index: 1;
-  width: 292px;
-  height: 292px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  background: #246b8a;
-  box-shadow: 0 0 0 16px rgba(36, 107, 138, 0.12), 0 0 95px rgba(36, 107, 138, 0.34);
-  text-align: center;
-  transform: rotate(-9deg);
-}
-
-.hero-voice strong {
-  font-size: 72px;
-  letter-spacing: -0.11em;
-  line-height: 0.96;
-}
-
-.hero-voice span {
-  font-size: 9px;
-  font-weight: 700;
-  letter-spacing: 0.22em;
+  width: min(37vw, 442px);
+  height: auto;
+  filter: drop-shadow(0 0 20px rgba(122, 181, 204, 0.16));
 }
 
 .hero-stamp {
@@ -2385,13 +2365,8 @@ h2 em,
     min-height: 390px;
   }
 
-  .hero-voice {
-    width: 240px;
-    height: 240px;
-  }
-
-  .hero-voice strong {
-    font-size: 59px;
+  .hero-logo-outline {
+    width: min(36vw, 340px);
   }
 
   .section-pad,
@@ -2576,13 +2551,8 @@ h2 em,
     height: min(75vw, 290px);
   }
 
-  .hero-voice {
-    width: min(57vw, 222px);
-    height: min(57vw, 222px);
-  }
-
-  .hero-voice strong {
-    font-size: clamp(48px, 14vw, 61px);
+  .hero-logo-outline {
+    width: min(75vw, 290px);
   }
 
   .hero-art-index {
