@@ -39,10 +39,14 @@ function createSlug(value: string) {
 export function ArticleEditor({
   article,
   categories,
+  canManageCategories = true,
+  canPublish = true,
   saved = false,
 }: {
   article?: ArticleFormData;
   categories: CategoryOption[];
+  canManageCategories?: boolean;
+  canPublish?: boolean;
   saved?: boolean;
 }) {
   const actionFunction = article?.id ? updateArticleAction : createArticleAction;
@@ -134,7 +138,7 @@ export function ArticleEditor({
         ) : (
           <p className="admin-help">Aucune catégorie n’est créée. <Link href="/admin/categories">Créer une première catégorie</Link>.</p>
         )}
-        {categories.length > 0 && <small><Link href="/admin/categories">Gérer les catégories</Link></small>}
+        {canManageCategories && categories.length > 0 && <small><Link href="/admin/categories">Gérer les catégories</Link></small>}
       </div>
       <div className="admin-editor-row">
         <div className="admin-field">
@@ -142,15 +146,15 @@ export function ArticleEditor({
           <select id="article-status" name="status" defaultValue={article?.status ?? "DRAFT"}>
             <option value="DRAFT">Brouillon</option>
             <option value="IN_REVIEW">À relire</option>
-            <option value="SCHEDULED">Programmé</option>
-            <option value="PUBLISHED">Publié</option>
+            {canPublish && <option value="SCHEDULED">Programmé</option>}
+            {canPublish && <option value="PUBLISHED">Publié</option>}
           </select>
         </div>
-        <div className="admin-field">
+        {canPublish && <div className="admin-field">
           <label htmlFor="article-published-at">Date de publication</label>
           <input id="article-published-at" name="publishedAt" type="datetime-local" defaultValue={article?.publishedAt} />
           <small>Requise pour une publication programmée.</small>
-        </div>
+        </div>}
       </div>
       {state.error && <p className="admin-error" role="alert">{state.error}</p>}
       <div className="admin-form-actions">

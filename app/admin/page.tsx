@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowUpRight, FilePlus2 } from "lucide-react";
-import { ArticleStatus, ModerationStatus } from "@prisma/client";
+import { ArticleStatus, ModerationStatus, UserRole } from "@prisma/client";
 import { requireAdminUser } from "@/lib/admin-auth";
 import { db } from "@/lib/db";
 
@@ -12,15 +12,17 @@ export default async function AdminDashboard() {
   const [published, drafts, inReview, testimonials, recentArticles] = await Promise.all([
     db.article.count({
       where: {
+        ...(user.role === UserRole.CONTRIBUTOR ? { authorId: user.id } : {}),
         status: ArticleStatus.PUBLISHED,
         publishedAt: { lte: new Date() },
         archivedAt: null,
       },
     }),
-    db.article.count({ where: { status: ArticleStatus.DRAFT } }),
-    db.article.count({ where: { status: ArticleStatus.IN_REVIEW } }),
+    db.article.count({ where: { ...(user.role === UserRole.CONTRIBUTOR ? { authorId: user.id } : {}), status: ArticleStatus.DRAFT } }),
+    db.article.count({ where: { ...(user.role === UserRole.CONTRIBUTOR ? { authorId: user.id } : {}), status: ArticleStatus.IN_REVIEW } }),
     db.testimonial.count({ where: { moderationStatus: ModerationStatus.PENDING } }),
     db.article.findMany({
+      where: user.role === UserRole.CONTRIBUTOR ? { authorId: user.id } : undefined,
       orderBy: { updatedAt: "desc" },
       take: 5,
       select: { id: true, title: true, status: true, updatedAt: true },
@@ -42,7 +44,7 @@ export default async function AdminDashboard() {
         <div><span>Articles publiés</span><strong>{published}</strong></div>
         <div><span>Brouillons</span><strong>{drafts}</strong></div>
         <div><span>À relire</span><strong>{inReview}</strong></div>
-        <div><span>Témoignages à modérer</span><strong>{testimonials}</strong></div>
+        {user.role === UserRole.ADMIN && <div><span>Témoignages à modérer</span><strong>{testimonials}</strong></div>}
       </section>
       <section className="admin-panel">
         <div className="admin-panel-heading">
@@ -73,7 +75,9 @@ export default async function AdminDashboard() {
         )}
       </section>
       <p className="admin-callout">
-        La modération des témoignages et la médiathèque nécessitent encore leur interface d’administration.
+        {user.role === UserRole.ADMIN
+          ? "La modération des témoignages et la médiathèque nécessitent encore leur interface d’administration."
+          : "Vous ne voyez ici que les articles dont vous êtes l’auteur."}
       </p>
     </main>
   );

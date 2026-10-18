@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { LogOut, Settings } from "lucide-react";
+import { LogOut, Settings, Users } from "lucide-react";
+import { UserRole } from "@prisma/client";
 import { logoutAction } from "@/app/admin/actions";
 import { BrandSymbol } from "@/components/brand-symbol";
 import { getAdminUser } from "@/lib/admin-auth";
@@ -27,8 +28,9 @@ export default async function AdminLayout({ children }: LayoutProps<"/admin">) {
           <nav aria-label="Administration">
             <Link href="/admin">Tableau de bord</Link>
             <Link href="/admin/articles">Articles</Link>
-            <Link href="/admin/categories">Catégories</Link>
-            {user.role === "ADMIN" && <Link href="/admin/settings"><Settings size={14} aria-hidden="true" /> Réglages</Link>}
+            {user.role === UserRole.ADMIN && <Link href="/admin/categories">Catégories</Link>}
+            {user.role === UserRole.ADMIN && <Link href="/admin/users"><Users size={14} aria-hidden="true" /> Utilisateurs</Link>}
+            {user.role === UserRole.ADMIN && <Link href="/admin/settings"><Settings size={14} aria-hidden="true" /> Réglages</Link>}
           </nav>
           <form action={logoutAction}>
             <button type="submit" className="admin-logout"><LogOut size={15} aria-hidden="true" /> Déconnexion</button>

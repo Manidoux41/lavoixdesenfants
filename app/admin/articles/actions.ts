@@ -1,11 +1,11 @@
 "use server";
 
-import { ArticleStatus, Prisma } from "@prisma/client";
+import { ArticleStatus, Prisma, UserRole } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { db } from "@/lib/db";
-import { requireAdminUser } from "@/lib/admin-auth";
+import { requireAdminUser, requireAdministrator } from "@/lib/admin-auth";
 import { publicationDate } from "@/lib/publication";
 
 export type ArticleFormState = { error?: string };
@@ -88,6 +88,9 @@ export async function createArticleAction(
   const user = await requireAdminUser();
   const parsed = parseArticle(formData);
   if (!parsed.success) return { error: "Vérifiez les champs. Le slug doit contenir des lettres minuscules, chiffres et tirets." };
+  if (user.role === UserRole.CONTRIBUTOR && !["DRAFT", "IN_REVIEW"].includes(parsed.data.status)) {
+    return { error: "Les contributeurs peuvent enregistrer un brouillon ou le soumettre à relecture." };
+  }
   if (!await isAllowedCoverImage(parsed.data.coverImageUrl)) {
     return { error: "Choisissez une image intégrée au site ou téléversée dans la médiathèque." };
   }
@@ -126,10 +129,24 @@ export async function updateArticleAction(
   _previousState: ArticleFormState,
   formData: FormData,
 ): Promise<ArticleFormState> {
-  await requireAdminUser();
+  const user = await requireAdminUser();
   const parsed = parseArticle(formData);
   if (!parsed.success || !parsed.data.id) {
     return { error: "Vérifiez les champs requis et réessayez." };
+  }
+  if (user.role === UserRole.CONTRIBUTOR) {
+    const article = await db.article.findFirst({
+      where: {
+        id: parsed.data.id,
+        authorId: user.id,
+        status: { in: [ArticleStatus.DRAFT, ArticleStatus.IN_REVIEW] },
+      },
+      select: { id: true },
+    });
+    if (!article) return { error: "Vous ne pouvez modifier que vos propres articles." };
+    if (!["DRAFT", "IN_REVIEW"].includes(parsed.data.status)) {
+      return { error: "Les contributeurs peuvent enregistrer un brouillon ou le soumettre à relecture." };
+    }
   }
   if (!await isAllowedCoverImage(parsed.data.coverImageUrl)) {
     return { error: "Choisissez une image intégrée au site ou téléversée dans la médiathèque." };
@@ -139,7 +156,12 @@ export async function updateArticleAction(
 
   try {
     await db.article.update({
-      where: { id: parsed.data.id },
+      where: {
+        id: parsed.data.id,
+        ...(user.role === UserRole.CONTRIBUTOR
+          ? { authorId: user.id, status: { in: [ArticleStatus.DRAFT, ArticleStatus.IN_REVIEW] } }
+          : {}),
+      },
       data: {
         title: parsed.data.title,
         slug: parsed.data.slug,
@@ -166,7 +188,7 @@ export async function updateArticleAction(
 }
 
 export async function archiveArticleAction(formData: FormData) {
-  await requireAdminUser();
+  await requireAdministrator();
   const id = z.string().min(1).max(64).parse(formData.get("id"));
   await db.article.update({
     where: { id },
@@ -176,7 +198,7 @@ export async function archiveArticleAction(formData: FormData) {
 }
 
 export async function restoreArticleAction(formData: FormData) {
-  await requireAdminUser();
+  await requireAdministrator();
   const id = z.string().min(1).max(64).parse(formData.get("id"));
   const article = await db.article.findUniqueOrThrow({
     where: { id, status: ArticleStatus.ARCHIVED },
@@ -193,8 +215,7 @@ export async function restoreArticleAction(formData: FormData) {
 }
 
 export async function deleteArticleAction(formData: FormData) {
-  const user = await requireAdminUser();
-  if (user.role !== "ADMIN") throw new Error("Administrator role required to permanently delete articles.");
+  await requireAdministrator();
   const id = z.string().min(1).max(64).parse(formData.get("id"));
   await db.article.delete({ where: { id } });
   revalidateEditorialPages();

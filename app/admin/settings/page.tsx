@@ -1,16 +1,14 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
-import { notFound } from "next/navigation";
 import { SettingsForm } from "@/app/admin/settings/settings-form";
 import { DEFAULT_HERO_VIDEO_ID, getHeroVideoSettings } from "@/lib/site-settings";
-import { requireAdminUser } from "@/lib/admin-auth";
+import { requireAdministrator } from "@/lib/admin-auth";
 
 export const metadata: Metadata = { title: "Réglages du site" };
 
 export default async function SiteSettingsPage() {
-  const user = await requireAdminUser();
-  if (user.role !== "ADMIN") notFound();
+  await requireAdministrator();
 
   const videoSettings = await getHeroVideoSettings();
   const videoUrl = `https://www.youtube.com/watch?v=${videoSettings.videoId || DEFAULT_HERO_VIDEO_ID}`;

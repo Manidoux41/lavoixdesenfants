@@ -14,6 +14,7 @@ import {
   throttleKey,
   trustedClientId,
 } from "@/lib/admin-auth";
+import { UserRole } from "@prisma/client";
 
 export type LoginState = { error?: string };
 
@@ -41,12 +42,12 @@ export async function loginAction(
 
   const user = await db.user.findUnique({
     where: { email },
-    select: { id: true, passwordHash: true },
+    select: { id: true, passwordHash: true, role: true },
   });
 
   const expectedHash = user?.passwordHash ?? await DUMMY_PASSWORD_HASH;
   const passwordIsValid = await verifyPassword(parsed.data.password, expectedHash);
-  if (!user || !passwordIsValid) {
+  if (!user || !passwordIsValid || user.role === UserRole.USER) {
     await recordFailedLogin(key);
     return { error: "Adresse e-mail ou mot de passe invalide." };
   }

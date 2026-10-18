@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowUpRight, FilePlus2, Search } from "lucide-react";
-import { ArticleStatus } from "@prisma/client";
+import { ArticleStatus, UserRole } from "@prisma/client";
 import { archiveArticleAction, deleteArticleAction, restoreArticleAction } from "@/app/admin/articles/actions";
 import { ConfirmSubmitButton } from "@/components/confirm-submit-button";
 import { requireAdminUser } from "@/lib/admin-auth";
@@ -27,6 +27,7 @@ export default async function AdminArticlesPage({ searchParams }: { searchParams
   const status = Object.values(ArticleStatus).find((candidate) => candidate === requestedStatus);
   const articles = await db.article.findMany({
     where: {
+      ...(user.role === UserRole.CONTRIBUTOR ? { authorId: user.id } : {}),
       ...(query ? { title: { contains: query, mode: "insensitive" as const } } : {}),
       ...(status ? { status } : {}),
     },
@@ -39,7 +40,7 @@ export default async function AdminArticlesPage({ searchParams }: { searchParams
   return (
     <main className="admin-main" id="contenu">
       <div className="admin-page-heading">
-        <div><p className="admin-kicker">CONTENUS</p><h1>Articles</h1><p>Gérez les brouillons et publications.</p></div>
+        <div><p className="admin-kicker">CONTENUS</p><h1>Articles</h1><p>{user.role === UserRole.ADMIN ? "Gérez les brouillons et publications." : "Gérez vos articles et soumettez-les à relecture."}</p></div>
         <Link className="admin-primary" href="/admin/articles/new"><FilePlus2 size={16} aria-hidden="true" /> Nouvel article</Link>
       </div>
       <form className="admin-filters" action="/admin/articles">
@@ -65,12 +66,12 @@ export default async function AdminArticlesPage({ searchParams }: { searchParams
                     <td>{date(article.updatedAt)}</td>
                     <td className="admin-row-actions">
                       <Link href={`/admin/articles/${article.id}/edit`}>Modifier</Link>
-                      {article.status === ArticleStatus.ARCHIVED ? (
+                      {user.role === UserRole.ADMIN && (article.status === ArticleStatus.ARCHIVED ? (
                         <form action={restoreArticleAction}><input type="hidden" name="id" value={article.id} /><button type="submit">Restaurer</button></form>
                       ) : (
                         <form action={archiveArticleAction}><input type="hidden" name="id" value={article.id} /><button type="submit">Archiver</button></form>
-                      )}
-                      {user.role === "ADMIN" && <form action={deleteArticleAction}><input type="hidden" name="id" value={article.id} /><ConfirmSubmitButton className="admin-danger" confirmation="Supprimer définitivement cet article ? Cette action est irréversible.">Supprimer</ConfirmSubmitButton></form>}
+                      ))}
+                      {user.role === UserRole.ADMIN && <form action={deleteArticleAction}><input type="hidden" name="id" value={article.id} /><ConfirmSubmitButton className="admin-danger" confirmation="Supprimer définitivement cet article ? Cette action est irréversible.">Supprimer</ConfirmSubmitButton></form>}
                     </td>
                   </tr>
                 ))}
@@ -81,7 +82,7 @@ export default async function AdminArticlesPage({ searchParams }: { searchParams
           <div className="admin-empty"><p>Aucun article ne correspond à ces critères.</p><Link href="/admin/articles/new">Créer un article <ArrowUpRight size={15} aria-hidden="true" /></Link></div>
         )}
       </section>
-      <p className="admin-callout">Affichage limité aux 100 contenus les plus récemment modifiés.</p>
+      <p className="admin-callout">Affichage limité aux 100 contenus les plus récemment modifiés.{user.role === UserRole.CONTRIBUTOR ? " Vous ne voyez que vos propres articles." : ""}</p>
     </main>
   );
 }

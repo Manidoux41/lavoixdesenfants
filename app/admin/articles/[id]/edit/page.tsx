@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, ExternalLink } from "lucide-react";
-import { ArticleStatus } from "@prisma/client";
+import { ArticleStatus, UserRole } from "@prisma/client";
 import { ArticleEditor } from "@/app/admin/articles/article-editor";
 import { requireAdminUser } from "@/lib/admin-auth";
 import { db } from "@/lib/db";
@@ -13,13 +13,18 @@ export default async function EditArticlePage({ params, searchParams }: {
   params: Promise<{ id: string }>;
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
-  await requireAdminUser();
+  const user = await requireAdminUser();
   const [{ id }, query] = await Promise.all([
     params,
     searchParams,
   ]);
   const article = await db.article.findUnique({
-    where: { id },
+    where: {
+      id,
+      ...(user.role === UserRole.CONTRIBUTOR
+        ? { authorId: user.id, status: { in: [ArticleStatus.DRAFT, ArticleStatus.IN_REVIEW] } }
+        : {}),
+    },
     include: { categories: { select: { id: true, name: true } } },
   });
   if (!article) notFound();
@@ -53,6 +58,8 @@ export default async function EditArticlePage({ params, searchParams }: {
           categories: article.categories,
         }}
         categories={categories}
+        canManageCategories={user.role === UserRole.ADMIN}
+        canPublish={user.role === UserRole.ADMIN}
         saved={saved}
       />
     </main>

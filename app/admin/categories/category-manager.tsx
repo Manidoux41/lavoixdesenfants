@@ -2,7 +2,13 @@
 
 import { useActionState } from "react";
 import { FolderPlus } from "lucide-react";
-import { createCategoryAction, type CategoryFormState } from "@/app/admin/categories/actions";
+import { ConfirmSubmitButton } from "@/components/confirm-submit-button";
+import {
+  createCategoryAction,
+  deleteCategoryAction,
+  updateCategoryAction,
+  type CategoryFormState,
+} from "@/app/admin/categories/actions";
 
 type CategorySummary = {
   id: string;
@@ -46,17 +52,48 @@ export function CategoryManager({ categories }: { categories: CategorySummary[] 
           <div className="admin-table-wrap">
             <table className="admin-table">
               <thead>
-                <tr><th scope="col">Catégorie</th><th scope="col">Adresse</th><th scope="col">Articles liés</th></tr>
+                <tr><th scope="col">Catégorie</th><th scope="col">Adresse / description</th><th scope="col">Articles liés</th><th scope="col">Actions</th></tr>
               </thead>
               <tbody>
                 {categories.map((category) => (
                   <tr key={category.id}>
                     <th scope="row">
-                      {category.name}
-                      {category.description && <small>{category.description}</small>}
+                      <input
+                        aria-label={`Nom de ${category.name}`}
+                        name="name"
+                        form={`category-update-${category.id}`}
+                        defaultValue={category.name}
+                        required
+                        minLength={2}
+                        maxLength={60}
+                      />
                     </th>
-                    <td>/{category.slug}</td>
+                    <td>
+                      <input
+                        aria-label={`Description de ${category.name}`}
+                        name="description"
+                        form={`category-update-${category.id}`}
+                        defaultValue={category.description ?? ""}
+                        maxLength={180}
+                      />
+                      <small>/{category.slug}</small>
+                    </td>
                     <td>{category._count.articles}</td>
+                    <td className="admin-row-actions">
+                      <form id={`category-update-${category.id}`} action={updateCategoryAction}>
+                        <input type="hidden" name="id" value={category.id} />
+                        <button type="submit">Enregistrer</button>
+                      </form>
+                      <form action={deleteCategoryAction}>
+                        <input type="hidden" name="id" value={category.id} />
+                        <ConfirmSubmitButton
+                          className="admin-danger"
+                          confirmation="Supprimer cette catégorie ? Les articles associés resteront en ligne sans cette catégorie."
+                        >
+                          Supprimer
+                        </ConfirmSubmitButton>
+                      </form>
+                    </td>
                   </tr>
                 ))}
               </tbody>

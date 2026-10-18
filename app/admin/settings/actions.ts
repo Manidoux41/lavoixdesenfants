@@ -2,7 +2,7 @@
 
 import { Prisma } from "@prisma/client";
 import { revalidatePath } from "next/cache";
-import { requireAdminUser } from "@/lib/admin-auth";
+import { requireAdministrator } from "@/lib/admin-auth";
 import { db } from "@/lib/db";
 import { DEFAULT_HERO_VIDEO_ID } from "@/lib/site-settings";
 import { extractYouTubeVideoId } from "@/lib/youtube-video";
@@ -13,10 +13,7 @@ export async function saveHeroVideoAction(
   _previousState: SiteSettingsFormState,
   formData: FormData,
 ): Promise<SiteSettingsFormState> {
-  const user = await requireAdminUser();
-  if (user.role !== "ADMIN") {
-    throw new Error("Administrator role required to update site settings.");
-  }
+  await requireAdministrator();
 
   const rawValue = formData.get("videoUrl");
   const enabledValue = formData.get("videoEnabled");

@@ -383,6 +383,34 @@ body:has(.admin-shell) > .site-footer {
   color: #246b8a;
 }
 
+.admin-table input,
+.admin-table select {
+  min-height: 34px;
+  max-width: 260px;
+  padding: 6px 8px;
+  border: 1px solid #d8d6d0;
+  border-radius: 0;
+  background: #fff;
+  color: #343b44;
+  font: inherit;
+}
+
+.admin-table input[type="email"] {
+  min-width: 205px;
+}
+
+.user-create-panel {
+  margin-bottom: 18px;
+}
+
+.user-create-panel .admin-editor {
+  border: 0;
+}
+
+.user-list-panel .admin-table {
+  min-width: 900px;
+}
+
 .admin-back {
   margin-bottom: 19px;
   display: inline-flex;

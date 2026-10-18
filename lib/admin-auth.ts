@@ -4,8 +4,11 @@ import { createHash, createHmac, randomBytes } from "node:crypto";
 import { cache } from "react";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import { UserRole } from "@prisma/client";
 import { db } from "@/lib/db";
 import { createPasswordHash } from "@/lib/password";
+
+type AdminRole = Exclude<UserRole, "USER">;
 
 export const ADMIN_COOKIE_NAME = "lv_admin_session";
 const SESSION_DURATION_MS = 14 * 24 * 60 * 60 * 1000;
@@ -16,8 +19,12 @@ export type AdminUser = {
   id: string;
   name: string | null;
   email: string;
-  role: "ADMIN" | "EDITOR";
+  role: AdminRole;
 };
+
+function isAdminRole(role: UserRole): role is AdminRole {
+  return role === UserRole.ADMIN || role === UserRole.CONTRIBUTOR;
+}
 
 function sessionSecret() {
   const secret = process.env.SESSION_SECRET;
@@ -79,6 +86,7 @@ export const getAdminUser = cache(async (): Promise<AdminUser | null> => {
     where: {
       tokenHash: digestSessionToken(token),
       expiresAt: { gt: new Date() },
+      user: { role: { in: [UserRole.ADMIN, UserRole.CONTRIBUTOR] } },
     },
     select: {
       user: {
@@ -87,12 +95,22 @@ export const getAdminUser = cache(async (): Promise<AdminUser | null> => {
     },
   });
 
-  return session?.user ?? null;
+  const user = session?.user;
+  if (!user) return null;
+  const role = user.role;
+  if (!isAdminRole(role)) return null;
+  return { id: user.id, name: user.name, email: user.email, role };
 });
 
 export async function requireAdminUser() {
   const user = await getAdminUser();
   if (!user) redirect("/admin/login");
+  return user;
+}
+
+export async function requireAdministrator() {
+  const user = await requireAdminUser();
+  if (user.role !== UserRole.ADMIN) redirect("/admin");
   return user;
 }
 
