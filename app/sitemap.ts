@@ -17,8 +17,15 @@ const staticRoutes = [
 ];
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.association-la-voix-des-enfants-places-a-vienne-38200.fr";
-  const routes = staticRoutes.map((route) => ({ url: `${baseUrl}${route}` }));
+  const baseUrl = (
+    process.env.NEXT_PUBLIC_SITE_URL ??
+    "https://la-voix-des-enfants-places-vienne.vercel.app"
+  ).replace(/\/+$/, "");
+  const routes = staticRoutes.map((route) => ({
+    url: `${baseUrl}${route}`,
+    changeFrequency: route === "/actualites" ? "daily" as const : "monthly" as const,
+    priority: route === "" ? 1 : route === "/association" || route === "/contact" ? 0.9 : 0.7,
+  }));
 
   if (!process.env.DATABASE_URL) return routes;
   await connection();

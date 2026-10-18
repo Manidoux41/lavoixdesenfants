@@ -4,8 +4,9 @@ import { PageHeading } from "@/components/page-heading";
 import { ContactForm } from "./contact-form";
 
 export const metadata: Metadata = {
-  title: "Contact",
-  description: "Écrire à l’association La Voix des Enfants Placés à Vienne.",
+  title: "Contacter Cassandra Begot à Vienne",
+  description: "Contacter La Voix des enfants placés à Vienne, association fondée par Cassandra Begot. Coordonnées WhatsApp et e-mail.",
+  alternates: { canonical: "/contact" },
 };
 
 export default function ContactPage() {

@@ -34,7 +34,7 @@ function sessionSecret() {
   return secret;
 }
 
-function digestSessionToken(token: string) {
+export function digestSessionToken(token: string) {
   return createHash("sha256").update(token).digest("hex");
 }
 

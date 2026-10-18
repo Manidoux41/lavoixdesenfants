@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
 import {
@@ -12,6 +13,19 @@ import { ArticleSlideshow } from "@/components/article-slideshow";
 import { HeroBackgroundVideo } from "@/components/hero-background-video";
 import { getLatestArticles } from "@/lib/articles";
 import { getHeroVideoSettings } from "@/lib/site-settings";
+import { OrganizationJsonLd } from "@/components/organization-json-ld";
+
+export const metadata: Metadata = {
+  title: "Cassandra Begot, association à Vienne",
+  description:
+    "Découvrez La Voix des enfants placés à Vienne, association fondée et présidée par Cassandra Begot pour écouter les familles et défendre les droits de l’enfant.",
+  alternates: { canonical: "/" },
+  openGraph: {
+    title: "Cassandra Begot | La Voix des enfants placés à Vienne",
+    description: "Association à Vienne (38200), Isère : écoute, accompagnement des familles et droits de l’enfant.",
+    url: "/",
+  },
+};
 
 const missions = [
   {
@@ -78,6 +92,7 @@ function LatestArticlesFallback() {
 export default function Home() {
   return (
     <main id="contenu">
+      <OrganizationJsonLd />
       <section className="hero">
         <div className="hero-grain" aria-hidden="true" />
         <Suspense fallback={null}><HomeHeroVideo /></Suspense>
@@ -127,7 +142,7 @@ export default function Home() {
           Une association engagée pour la parole des familles confrontées au placement.
         </p>
         <p className="intro-aside">
-          L’association encourage le dialogue, l’accès aux droits et la recherche de solutions adaptées à l’intérêt de l’enfant.
+          Fondée et présidée par Cassandra Begot à Vienne (38200), l’association encourage le dialogue, l’accès aux droits et la recherche de solutions adaptées à l’intérêt de l’enfant.
         </p>
       </section>
 

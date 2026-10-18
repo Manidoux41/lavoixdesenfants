@@ -17,6 +17,11 @@ const messages: Record<string, { type: "error" | "success"; text: string }> = {
   "user-created": { type: "success", text: "Compte créé." },
   "user-updated": { type: "success", text: "Compte modifié." },
   "user-deleted": { type: "success", text: "Compte supprimé. Ses contenus ont été conservés." },
+  "password-invalid": { type: "error", text: "Les deux nouveaux mots de passe doivent être identiques et contenir au moins 14 caractères." },
+  "current-password-invalid": { type: "error", text: "Le mot de passe actuel est incorrect." },
+  "self-password-reset": { type: "error", text: "Pour votre propre compte, utilisez le formulaire de changement de mot de passe avec vérification du mot de passe actuel." },
+  "password-changed": { type: "success", text: "Votre mot de passe a été modifié. Votre session actuelle reste active." },
+  "password-reset": { type: "success", text: "Mot de passe modifié ; les sessions de cet utilisateur ont été révoquées." },
 };
 
 export default async function AdminUsersPage({

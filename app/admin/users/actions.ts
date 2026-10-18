@@ -4,9 +4,10 @@ import { Prisma, UserRole } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
-import { requireAdministrator } from "@/lib/admin-auth";
+import { cookies } from "next/headers";
+import { digestSessionToken, requireAdministrator } from "@/lib/admin-auth";
 import { db } from "@/lib/db";
-import { createPasswordHash } from "@/lib/password";
+import { createPasswordHash, verifyPassword } from "@/lib/password";
 
 const roles = [UserRole.USER, UserRole.CONTRIBUTOR, UserRole.ADMIN] as const;
 
@@ -139,4 +140,74 @@ export async function deleteUserAction(formData: FormData) {
   revalidateUsers();
   revalidatePath("/admin/articles");
   redirect("/admin/users?success=user-deleted");
+}
+
+const passwordSchema = z.object({
+  password: z.string().min(14).max(256),
+  confirmation: z.string().min(14).max(256),
+}).refine(({ password, confirmation }) => password === confirmation);
+
+export async function changeOwnPasswordAction(formData: FormData) {
+  const admin = await requireAdministrator();
+  const parsed = z.object({
+    currentPassword: z.string().min(1).max(256),
+    password: z.string().min(14).max(256),
+    confirmation: z.string().min(14).max(256),
+  }).refine(({ password, confirmation }) => password === confirmation).safeParse({
+    currentPassword: formData.get("currentPassword"),
+    password: formData.get("password"),
+    confirmation: formData.get("confirmation"),
+  });
+  if (!parsed.success) redirect("/admin/users?error=password-invalid");
+
+  const account = await db.user.findUniqueOrThrow({
+    where: { id: admin.id },
+    select: { passwordHash: true },
+  });
+  if (!await verifyPassword(parsed.data.currentPassword, account.passwordHash)) {
+    redirect("/admin/users?error=current-password-invalid");
+  }
+
+  const cookieStore = await cookies();
+  const token = cookieStore.get("lv_admin_session")?.value;
+  if (!token) redirect("/admin/login");
+  const currentTokenHash = digestSessionToken(token);
+  await db.$transaction([
+    db.user.update({
+      where: { id: admin.id },
+      data: { passwordHash: await createPasswordHash(parsed.data.password) },
+    }),
+    db.session.deleteMany({
+      where: { userId: admin.id, tokenHash: { not: currentTokenHash } },
+    }),
+  ]);
+
+  revalidateUsers();
+  redirect("/admin/users?success=password-changed");
+}
+
+export async function resetUserPasswordAction(formData: FormData) {
+  const admin = await requireAdministrator();
+  const parsed = passwordSchema.extend({
+    id: z.string().min(1).max(64),
+  }).safeParse({
+    id: formData.get("id"),
+    password: formData.get("password"),
+    confirmation: formData.get("confirmation"),
+  });
+  if (!parsed.success) redirect("/admin/users?error=password-invalid");
+  if (parsed.data.id === admin.id) redirect("/admin/users?error=self-password-reset");
+  const target = await db.user.findUnique({ where: { id: parsed.data.id }, select: { id: true } });
+  if (!target) redirect("/admin/users?error=user-not-found");
+
+  await db.$transaction([
+    db.user.update({
+      where: { id: parsed.data.id },
+      data: { passwordHash: await createPasswordHash(parsed.data.password) },
+    }),
+    db.session.deleteMany({ where: { userId: parsed.data.id } }),
+  ]);
+
+  revalidateUsers();
+  redirect("/admin/users?success=password-reset");
 }

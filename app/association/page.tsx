@@ -4,8 +4,16 @@ import { ArrowUpRight, Heart, MessageCircle, ShieldCheck } from "lucide-react";
 import { PageHeading } from "@/components/page-heading";
 
 export const metadata: Metadata = {
-  title: "L’association",
-  description: "La mission et les engagements de La Voix des Enfants Placés à Vienne.",
+  title: "Cassandra Begot et l’association à Vienne",
+  description:
+    "Qui est Cassandra Begot ? Découvrez la mission de La Voix des enfants placés à Vienne (38200), association engagée pour les enfants et les familles.",
+  keywords: [
+    "Cassandra Begot Vienne",
+    "présidente association enfants placés",
+    "association protection de l’enfance Isère",
+    "aide aux familles Vienne",
+  ],
+  alternates: { canonical: "/association" },
 };
 
 const commitments = [
