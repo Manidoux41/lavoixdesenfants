@@ -16,7 +16,8 @@
     "db:migrate": "prisma migrate dev",
     "db:deploy": "prisma migrate deploy",
     "db:seed-content": "node --env-file=.env scripts/seed-association-content.mjs",
-    "admin:create": "node --env-file=.env scripts/create-admin.mjs"
+    "admin:create": "node --env-file=.env scripts/create-admin.mjs",
+    "admin:reset-password": "node --env-file=.env scripts/reset-admin-password.mjs"
   },
   "dependencies": {
     "@prisma/client": "^6.19.3",

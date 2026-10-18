@@ -110,6 +110,8 @@ Après avoir créé la base et appliqué sa migration :
 
 La connexion utilise une session aléatoire conservée sous forme hachée en base et un cookie `HttpOnly`, `SameSite=Lax`, `Secure` en production. Les tentatives invalides sont limitées par couple adresse/client, avec identifiant de client pseudonymisé par HMAC.
 
+Pour remplacer le mot de passe d’un administrateur, renseigner temporairement `ADMIN_PASSWORD_RESET_EMAIL` et `ADMIN_PASSWORD_RESET_PASSWORD` dans le `.env` puis exécuter `npm run admin:reset-password`. Le script hache le nouveau mot de passe avec scrypt et révoque toutes les sessions de cet administrateur. Supprimer immédiatement ces deux variables après exécution.
+
 ## Informations à confirmer avant publication
 
 - Coordonnées publiques et identité juridique exacte de l’association.
