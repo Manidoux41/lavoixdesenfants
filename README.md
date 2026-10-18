@@ -29,7 +29,7 @@ npm ci
 cp .env.example .env
 ```
 
-Renseigner `DATABASE_URL`, `DIRECT_URL` et `SESSION_SECRET` dans `.env`. Pour activer l’envoi d’images, ajouter `BLOB_STORE_ID` et `BLOB_READ_WRITE_TOKEN` depuis les variables de l’intégration Vercel Blob, sans préfixe `NEXT_PUBLIC_` et sans commiter les valeurs. En local, récupérer les variables via `vercel env pull` ou les configurer dans le `.env` ignoré par Git.
+Renseigner `DATABASE_URL`, `PRISMA_DATABASE_URL` et `SESSION_SECRET` dans `.env`. `POSTGRES_URL` peut également être présent comme alias fourni par le fournisseur ; le schéma Prisma utilise `DATABASE_URL` pour l’application et `PRISMA_DATABASE_URL` pour les commandes Prisma nécessitant une connexion directe. Pour activer l’envoi d’images, ajouter `BLOB_STORE_ID` et `BLOB_READ_WRITE_TOKEN` depuis les variables de l’intégration Vercel Blob, sans préfixe `NEXT_PUBLIC_` et sans commiter les valeurs. En local, récupérer les variables via `vercel env pull` ou les configurer dans le `.env` ignoré par Git.
 
 ```bash
 npm run db:generate
@@ -83,7 +83,7 @@ Les images doivent rester présentées comme des illustrations, jamais comme les
 `prisma/schema.prisma` définit PostgreSQL, les articles, utilisateurs, catégories, mots-clés, médias, témoignages, sessions et paramètres. Les brouillons, articles programmés et contenus archivés sont exclus des requêtes publiques.
 
 1. Créer une base PostgreSQL gérée compatible avec Prisma.
-2. Configurer `DATABASE_URL` avec l’URL de connexion adaptée à l’exécution serverless et `DIRECT_URL` avec une connexion directe pour les migrations.
+2. Configurer `DATABASE_URL` avec l’URL de connexion de l’application et `PRISMA_DATABASE_URL` avec l’URL directe utilisée pour les migrations Prisma.
 3. Configurer `NEXT_PUBLIC_SITE_URL` avec l’origine canonique publique.
 4. Configurer les variables Resend si le formulaire doit être actif.
 5. Appliquer les migrations versionnées depuis un poste/CI connecté à la base :
