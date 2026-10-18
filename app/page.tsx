@@ -9,7 +9,9 @@ import {
   Scale,
 } from "lucide-react";
 import { ArticleSlideshow } from "@/components/article-slideshow";
+import { HeroBackgroundVideo } from "@/components/hero-background-video";
 import { getLatestArticles } from "@/lib/articles";
+import { getHeroVideoSettings } from "@/lib/site-settings";
 
 const missions = [
   {
@@ -59,6 +61,11 @@ async function LatestArticles() {
   );
 }
 
+async function HomeHeroVideo() {
+  const videoSettings = await getHeroVideoSettings();
+  return videoSettings.enabled ? <HeroBackgroundVideo videoId={videoSettings.videoId} /> : null;
+}
+
 function LatestArticlesFallback() {
   return (
     <div className="empty-news" aria-label="Chargement des actualités">
@@ -73,6 +80,7 @@ export default function Home() {
     <main id="contenu">
       <section className="hero">
         <div className="hero-grain" aria-hidden="true" />
+        <Suspense fallback={null}><HomeHeroVideo /></Suspense>
         <div className="hero-inner">
           <div className="hero-copy">
             <p className="eyebrow eyebrow-light"><span className="eyebrow-mark" />Association · Vienne, Isère</p>

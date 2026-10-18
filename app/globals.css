@@ -183,6 +183,7 @@ textarea:focus-visible {
 
 .hero {
   position: relative;
+  isolation: isolate;
   overflow: hidden;
   min-height: 675px;
   background: var(--night);
@@ -200,13 +201,71 @@ textarea:focus-visible {
 .hero-grain {
   position: absolute;
   inset: 0;
+  z-index: 1;
   opacity: 0.1;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.2'/%3E%3C/svg%3E");
   pointer-events: none;
 }
 
+.hero-video-backdrop {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  overflow: hidden;
+  background: var(--night);
+  pointer-events: none;
+}
+
+.hero-video-backdrop::after {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(17, 39, 53, 0.84), rgba(17, 39, 53, 0.68));
+  content: "";
+}
+
+.hero-video-backdrop iframe {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: max(100vw, 1200px);
+  height: max(56.25vw, 675px);
+  border: 0;
+  opacity: 0.82;
+  transform: translate(-50%, -50%);
+}
+
+.hero-video-source {
+  position: absolute;
+  z-index: 4;
+  right: max(56px, calc((100vw - 1260px) / 2));
+  bottom: 13px;
+  padding: 7px 9px;
+  background: rgba(17, 39, 53, 0.32);
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 9px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.hero-video-source:hover {
+  color: white;
+}
+
+.hero-video-notice {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + 7px);
+  width: max-content;
+  max-width: min(360px, 80vw);
+  padding: 7px 9px;
+  background: rgba(17, 39, 53, 0.92);
+  color: white;
+  line-height: 1.5;
+}
+
 .hero-inner {
   position: relative;
+  z-index: 2;
   width: min(100% - 112px, 1260px);
   min-height: 675px;
   margin: 0 auto;
@@ -2506,6 +2565,16 @@ h2 em,
 
   .hero-side-note {
     display: none;
+  }
+
+  .hero-video-backdrop iframe {
+    width: max(100vw, calc(100vh * 1.7778));
+    height: max(56.25vw, 100vh);
+  }
+
+  .hero-video-source {
+    right: 21px;
+    bottom: 10px;
   }
 
   .hero-caption {

@@ -454,6 +454,27 @@ body:has(.admin-shell) > .site-footer {
   min-height: 42px;
 }
 
+.admin-video-enabled {
+  margin: 0 0 17px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: #303840;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.admin-video-enabled input {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  accent-color: #246b8a;
+}
+
+.admin-video-disclaimer {
+  margin-bottom: 18px;
+}
+
 .admin-field textarea {
   line-height: 1.65;
   resize: vertical;

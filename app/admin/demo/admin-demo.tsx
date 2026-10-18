@@ -103,8 +103,9 @@ function SectionContent({
   if (section === "settings") {
     return (
       <>
-        <div className="admin-page-heading"><div><p className="admin-kicker">CONFIGURATION</p><h1>Réglages du site</h1><p>Présentation indicative des futures préférences éditoriales.</p></div></div>
-        <div className="admin-panel demo-settings"><div><span>Nom du site</span><strong>La Voix des Enfants Placés</strong></div><div><span>Adresse publique</span><strong>À configurer</strong></div><div><span>Courriel de contact</span><strong>À confirmer avec l’association</strong></div></div>
+        <div className="admin-page-heading"><div><p className="admin-kicker">CONFIGURATION</p><h1>Réglages du site</h1><p>Maquette des préférences éditoriales — lecture seule.</p></div></div>
+        <div className="admin-panel demo-settings"><div><span>Nom du site</span><strong>La Voix des Enfants Placés</strong></div><div><span>Vidéo du hero</span><strong>La Maison des Maternelles · YouTube</strong></div><div><span>Lecture</span><strong>Automatique, en boucle et sans son</strong></div><div><span>Activation</span><strong>Gérée exclusivement par un administrateur</strong></div></div>
+        <p className="admin-callout">Le lien et l’activation sont modifiables dans les réglages réels, réservés aux administrateurs.</p>
       </>
     );
   }

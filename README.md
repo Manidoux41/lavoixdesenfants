@@ -10,6 +10,8 @@ La direction artistique privilégie désormais le bleu nuit et le bleu pétrole,
 
 Le logo fourni dans `public/images/ai-logo-66f1e7893932-standard.webp` est utilisé dans les en-têtes public et administrateur ainsi qu’au pied de page. La favicon reprend ce même visuel.
 
+Le hero d’accueil peut afficher automatiquement une vidéo YouTube muette en boucle derrière un voile bleu. Seul un administrateur peut activer ou désactiver la vidéo et remplacer son lien depuis `/admin/settings`. Lorsque la vidéo est activée, le lecteur YouTube se charge à l’ouverture de la page ; les visiteurs sont informés dans la notice de confidentialité. La vidéo proposée est [« Pourquoi autant de placements abusifs ? » de La Maison des Maternelles – France Télévisions](https://www.youtube.com/watch?v=LnIO5TXB2X0) ; vérifier que ce contenu reste approprié et disponible avant la mise en production.
+
 Sans variable `DATABASE_URL`, l’accueil et la rubrique `/actualites` affichent trois articles fictifs dans le diaporama et la liste afin de permettre de prévisualiser les images, catégories et liens d’articles. Chaque page d’exemple est signalée comme contenu de démonstration et ne représente pas une publication officielle. Ces exemples disparaissent dès que la base est configurée ; les articles publiés en base prennent alors le relais.
 
 Sans variable `DATABASE_URL`, `/admin/login` propose aussi un accès à `/admin/demo`, une maquette de l’espace d’administration alimentée uniquement par des exemples fictifs. Elle est en lecture seule et ne donne pas accès aux routes d’administration réelles ni aux opérations d’écriture. La maquette reste disponible une fois la base configurée, mais l’accès réel passe alors par la connexion habituelle.

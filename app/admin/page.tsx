@@ -73,7 +73,7 @@ export default async function AdminDashboard() {
         )}
       </section>
       <p className="admin-callout">
-        La modération des témoignages, la médiathèque et les paramètres du site nécessitent encore leur interface d’administration.
+        La modération des témoignages et la médiathèque nécessitent encore leur interface d’administration.
       </p>
     </main>
   );
